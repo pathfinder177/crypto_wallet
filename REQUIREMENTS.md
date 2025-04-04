@@ -115,14 +115,25 @@ Used as an **irreversible digital ledger** to:
 ### Bring multicurrency to the blockchain
 Converting a single to a multi-currency blockchain/ledger requires additional modules:
 - Multi-Coins/Tokens Ledger Design
-    Coins: chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://eprint.iacr.org/2020/895.pdf
+    Coins: https://eprint.iacr.org/2020/895.pdf
+        Formally: A ledger is assumed to be a list of transactions
+    
     Tokens: https://xrpl.org/
-    A ledger is assumed to be a list of transactions
 
 - Multi-currency transaction processing
-- Token issuance 
+    Same transactions remain
+
+    Generalized notion of Value presented here 
+    allows the atomic transfer of multiple assets and currencies 
+    in a single account-based transaction
+- Token issuance
+    - *(Optionally) add creator of the currency to specify monetary policy
+        - Add new TX type
+        - Make supply fixed
 
 - Modular architecture
+    *(Optionally) implements separate blockchain for each currency(sidechains)
+
 - Multi-Currency Wallet Integration
 - Consensus and Validation
     Adjustments to the consensus mechanism may be necessary if the introduction of multiple currencies impacts transaction throughput or security assumptions. In some designs, you might separate the validation of different asset types or incorporate additional verification steps for token-specific transactions.
@@ -140,6 +151,8 @@ Converting a single to a multi-currency blockchain/ledger requires additional mo
     Currency:
     - What will the blockchain address look like?
     - What are the formats for the keys necessary to create signatures for transactions?
+    - Value becomes map[currency, value] from int
+        Each currency should have own identity element(value-identityElem=0) and at start currency value is 0
 
     Blockchain:
     - One blockchain for both currencies or two?
