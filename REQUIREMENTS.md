@@ -162,7 +162,7 @@ Wallet logic contains in files: wallet, wallets
 ## Projecting
 ### Bring multicurrency to the blockchain
 Handles two types of transactions:
-1. Coinbase
+##### 1. Coinbase
 Given blockchain is created
 When genesis block is mined
 Then miner get subsidy in two currencies
@@ -170,10 +170,42 @@ Then miner get subsidy in two currencies
 Test: as blockchain is created there is correct subsidy got to miner
 Check: createBlockchain, newBlockchain, createWallet, getBalance
 
-2. UTXO
+REINDEX -> FindUTXO
+Something to differ currencies to work with
+Should 2 currencies be in one TX?
+    Probably not(except for coinbase)
+
+Iterate over values as REINDEX need it
+1) Iterate over currencies in method
+2) Method take currency as input to not to iterate over all
+3) Can method finds UTXOs for all currencies?
+4) If UTXO has mixed structure?
+5) Reindex by bucket
+
+Break down currencies into buckets only for UTXO?
+
+State: two buckets in DB:
+badgercoin_chainstate and catfish_chainstate
+
+##### Break down at TX level:
+
+Write each type of TXs to corr.buckets
+    Genesis block includes 2 TXs
+    Other block includes from 2 to 4 TXs:
+        One for coinbase and one for currency
+
+##### Break down at BLC level
+
+##### 2. UTXO
 Given UTXO TX is started
 When amount is calculated
 Then different currencies are handled correctly
+
+Put to different buckets should be shaped as transactions
+FindSpendableOutputs: what is sent and what do we search for
+
+Cases:
+    SEND: one currency has x UTXO number and other has y UTXO number and txID
 
 #### Questions:
     Currency:
