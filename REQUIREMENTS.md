@@ -138,12 +138,12 @@ Converting a single to a multi-currency blockchain/ledger requires:
 - Multi-Currency Wallet Integration
 
 #### Multi-token ledger design
-Ledger logic are consists of files:
-block*, utxo_set, wallet, wallets
+Ledger logic are contains in files:
+block*, utxo_set
 
 #### Multi-currency transaction processing
-Transaction logic are consists of files:
-block*, transaction*, utxo_set, wallet, wallets
+Transaction logic contains in files:
+block*, transaction*, utxo_set
 
 #### How TX is processed now(without server part)
 There are two types of TX:
@@ -155,10 +155,27 @@ There are two types of TX:
     Technically, coins should be unlocked using current owner data and locked using next owner data
 
 ### Make wallet multicurrency
+Wallet logic contains in files: wallet, wallets
+
 ### Wallet UI
 
 ## Projecting
 ### Bring multicurrency to the blockchain
+Handles two types of transactions:
+1. Coinbase
+Given blockchain is created
+When genesis block is mined
+Then miner get subsidy in two currencies
+
+Test: as blockchain is created there is correct subsidy got to miner
+Check: createBlockchain, newBlockchain, createWallet, getBalance
+
+2. UTXO
+Given UTXO TX is started
+When amount is calculated
+Then different currencies are handled correctly
+
+#### Questions:
     Currency:
     - What will the blockchain address look like?
         Won't be changed
