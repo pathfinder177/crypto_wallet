@@ -17,9 +17,5 @@ func New(r repo.LoginRepo) *UseCase {
 }
 
 func (uc *UseCase) Login(ctx context.Context, reg entity.Registration) (bool, error) {
-	if _, err := uc.repo.Read(ctx, reg); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return uc.repo.Read(ctx, reg)
 }

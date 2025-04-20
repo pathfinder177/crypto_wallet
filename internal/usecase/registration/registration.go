@@ -17,9 +17,5 @@ func New(r repo.RegistrationRepo) *UseCase {
 }
 
 func (uc *UseCase) Register(ctx context.Context, reg entity.Registration) (bool, error) {
-	if _, err := uc.repo.Create(ctx, reg); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return uc.repo.Create(ctx, reg)
 }

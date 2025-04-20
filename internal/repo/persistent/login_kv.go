@@ -16,8 +16,12 @@ func NewLoginRepo(m map[string]string) *LoginRepo {
 
 func (repo *LoginRepo) Read(ctx context.Context, reg entity.Registration) (bool, error) {
 	uname := reg.Username
-	if _, ok := repo.repo[uname]; !ok {
+	upass := reg.HashedPassword
+
+	if hash, ok := repo.repo[uname]; !ok {
 		return false, errors.New("no such user, please register")
+	} else if hash != upass {
+		return false, errors.New("password does not match")
 	}
 
 	return true, nil
