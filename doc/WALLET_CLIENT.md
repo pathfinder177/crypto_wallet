@@ -172,7 +172,7 @@ Tools (databases, servers, message brokers, any other packages and frameworks).
         router to proceed with (here it's users) requests OR else
         http/v1 : where use cases are described, requests are handled and urls(sign in/up) are chosen
 -   entity:
-        validation methods
+        *validation methods
         registration,login entities
 -   usecase:
         Repositories, webapi, rpc, and other business logic structures are injected into business logic structures 
