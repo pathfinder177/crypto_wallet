@@ -87,8 +87,8 @@ Wallet client uses wallet [server](https://github.com/pathfinder177/blockchain_g
 
 ### Addresses
 
-Wallet server: localhost:3003
-Wallet client: localhost:3004
+Wallet server HTTP: localhost:3003
+Wallet client HTTP: localhost:3004
 
 ### Wallet consists of:
 - Frontend to show new user and main wallet page
@@ -126,6 +126,7 @@ username wallet
         - delete wallet
 
 ## Projecting
+## Features
 1. All connections are handled in apart goroutine
 2. Graceful shutdown
 *3. Rate limiting(client)
@@ -195,6 +196,13 @@ Define what injects where
 
 ### Service handlers
 All handlers to get info from the server side
+/get_tx_history
+/get_currency_tx_history
+/send
+/delete*
+
+Any info from wallet server is got on /main page and use mainPageHandler internally
+E.g. click on getTXhistory returns txHistory(confirmation) and then returns user back to /main page
 
 ### Clean up the code
 ### Format the code

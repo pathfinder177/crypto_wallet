@@ -161,9 +161,7 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 	<hr>
 
     <h2>Balance</h2>
-    {{range .WBalance}}
-        <p>{{.}}</p>
-    {{end}}
+    {{.WBalance}}
 	<hr>
 
     <h2>Actions</h2>

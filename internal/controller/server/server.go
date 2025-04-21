@@ -15,12 +15,15 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		address := r.FormValue("walletAddress")
-		//getBalance. execute mainPage template if incorrect address and return
-		balance := []string{"Balance"} //FIXME
+		balance, err := getWalletBalance(address)
+		if err != nil {
+			http.Error(w, "Wallet address is not correct", http.StatusBadRequest)
+			return
+		}
 
 		data := struct {
 			WAddress string
-			WBalance []string
+			WBalance string //FIXME
 		}{address, balance}
 
 		tmpl.ExecuteTemplate(w, "walletActions", data)

@@ -7,8 +7,11 @@ import (
 	"main/internal/usecase/registration"
 )
 
-const repoSize int = 8
-const appPort = ":3004"
+const (
+	appPort string = ":3004"
+
+	repoSize int = 8 //FIXME
+)
 
 // FIXME add config
 func Run() {
@@ -29,5 +32,5 @@ func Run() {
 	//start server
 	server.StartServer(appPort, serverRouter)
 
-	//Graceful shutdown
+	//TODO Graceful shutdown
 }
