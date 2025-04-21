@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"main/internal/entity"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginRepo struct {
@@ -14,13 +16,16 @@ func NewLoginRepo(m map[string]string) *LoginRepo {
 	return &LoginRepo{m}
 }
 
-func (repo *LoginRepo) Read(ctx context.Context, reg entity.Registration) (bool, error) {
-	uname := reg.Username
-	upass := reg.HashedPassword
+func (repo *LoginRepo) Read(ctx context.Context, login entity.Login) (bool, error) {
+	uname := login.Username
+	upass := login.Password
 
-	if hash, ok := repo.repo[uname]; !ok {
+	hash, prs := repo.repo[uname]
+
+	if !prs {
 		return false, errors.New("no such user, please register")
-	} else if hash != upass {
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(upass)); err != nil {
 		return false, errors.New("password does not match")
 	}
 

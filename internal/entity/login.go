@@ -1,6 +1,6 @@
 package entity
 
 type Login struct {
-	Username       string
-	HashedPassword string
+	Username string
+	Password string
 }
