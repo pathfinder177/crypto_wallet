@@ -74,6 +74,30 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 </html>
 {{end}}
 
+
+{{define "registrationSuccess"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Successful</title>
+  <!-- after 3 seconds, go to /login -->
+  <meta http-equiv="refresh" content="3;url=/login">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding-top: 40px; }
+    .message { font-size: 1.2em; }
+    a { display: block; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Registration Complete</h1>
+  <p class="message">User <strong>{{.Username}}</strong> registered successfully.</p>
+  <p>If you’re not redirected automatically, <a href="/login">click here to log in</a>.</p>
+</body>
+</html>
+{{end}}
+
+
 {{define "login"}}
 <!DOCTYPE html>
 <html lang="en">
@@ -110,4 +134,49 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 </body>
 </html>
 {{end}}
+
+{{define "mainPage"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+</head>
+<body>
+    <h1>Enter your wallet address</h1>
+    <form method="POST" action="/main">
+        <input type="text" name="walletAddress" required>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+{{end}}
+
+{{define "walletActions"}}
+<!DOCTYPE html>
+<html>
+<head><title>Welcome</title></head>
+<body>
+    <h1>Your wallet address is {{.WAddress}}</h1>
+	<hr>
+
+    <h2>Balance</h2>
+    {{range .WBalance}}
+        <p>{{.}}</p>
+    {{end}}
+	<hr>
+
+    <h2>Actions</h2>
+	<form action="/transactions" method="GET">
+        <button type="submit">Get Transactions History</button><br />
+    </form>
+    <form>
+        <button type="button">Send Currency</button><br />
+        <button type="button">Get Currency Transactions History</button><br />
+        <button type="button">Delete Wallet</button><br />
+    </form>
+</body>
+</html>
+{{end}}
+
 `))

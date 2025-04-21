@@ -8,6 +8,31 @@ import (
 	"time"
 )
 
+func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+			return
+		}
+		address := r.FormValue("walletAddress")
+		//getBalance. execute mainPage template if incorrect address and return
+		balance := []string{"Balance"} //FIXME
+
+		data := struct {
+			WAddress string
+			WBalance []string
+		}{address, balance}
+
+		tmpl.ExecuteTemplate(w, "walletActions", data)
+
+		return
+	}
+
+	if err := tmpl.ExecuteTemplate(w, "mainPage", nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		username := r.FormValue("username")
@@ -26,7 +51,7 @@ func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Write([]byte("Welcome " + username + "!"))
+		http.Redirect(w, r, "/main", http.StatusSeeOther)
 		return
 	}
 
@@ -57,7 +82,12 @@ func (router *Router) registrationHandler(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		w.Write([]byte("User " + username + " registered successfully!"))
+		data := struct{ Username string }{Username: username}
+		if err := tmpl.ExecuteTemplate(w, "registrationSuccess", data); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		return
 	}
 
@@ -77,6 +107,7 @@ func StartServer(appPort string, router *Router) {
 	http.HandleFunc("/", router.indexHandler)
 	http.HandleFunc("/registration", router.registrationHandler)
 	http.HandleFunc("/login", router.loginHandler)
+	http.HandleFunc("/main", router.mainPageHandler)
 
 	log.Printf("Server is listening on http://localhost%s\n", appPort)
 	if err := http.ListenAndServe(appPort, nil); err != nil {
