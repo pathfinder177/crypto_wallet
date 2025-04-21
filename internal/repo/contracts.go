@@ -10,6 +10,6 @@ type (
 		Create(context.Context, entity.Registration) (bool, error)
 	}
 	LoginRepo interface {
-		Read(context.Context, entity.Registration) (bool, error)
+		Read(context.Context, entity.Login) (bool, error)
 	}
 )

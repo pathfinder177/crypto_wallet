@@ -16,6 +16,6 @@ func New(r repo.LoginRepo) *UseCase {
 	}
 }
 
-func (uc *UseCase) Login(ctx context.Context, reg entity.Registration) (bool, error) {
-	return uc.repo.Read(ctx, reg)
+func (uc *UseCase) Login(ctx context.Context, login entity.Login) (bool, error) {
+	return uc.repo.Read(ctx, login)
 }
