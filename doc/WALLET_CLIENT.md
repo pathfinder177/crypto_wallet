@@ -82,7 +82,7 @@ A wallet client-server application that works with two cryptocurrencies' coins (
 The approach is closer to service-oriented architecture at the system level.
 And clean architecture at the code level. FIXME(make sure it is done or changed)
 
-Wallet as client-side application implemented as web-server serves static content
+Wallet as client-side application implemented as web server
 Wallet client uses wallet [server](https://github.com/pathfinder177/blockchain_go) only to connect to blockchain
 
 ### Addresses
@@ -169,10 +169,8 @@ Tools (databases, servers, message brokers, any other packages and frameworks).
             run it
         graceful httpserver shutdown
 -   controller(server handler layer, http controller) = ENTRYPOINT
-        router to proceed with (here it's users) requests OR else
-        http/v1 : where use cases are described, requests are handled and urls(sign in/up) are chosen
 -   entity:
-        validation methods
+        *validation methods
         registration,login entities
 -   usecase:
         Repositories, webapi, rpc, and other business logic structures are injected into business logic structures 
