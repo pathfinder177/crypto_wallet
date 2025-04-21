@@ -168,9 +168,7 @@ Tools (databases, servers, message brokers, any other packages and frameworks).
         httpserver/handlers
             run it
         graceful httpserver shutdown
--   controller(server handler layer, http controller) = ENTRYPOINT FIXME
-        router to proceed with (here it's users) requests OR else
-        http/v1 : where use cases are described, requests are handled and urls(sign in/up)
+-   controller(server handler layer, http controller) = ENTRYPOINT
 -   entity:
         *validation methods
         registration,login entities

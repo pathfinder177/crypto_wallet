@@ -1,8 +1,9 @@
 package app
 
 import (
-	"main/internal/controller"
+	server "main/internal/controller/server"
 	"main/internal/repo/persistent"
+	"main/internal/usecase/login"
 	"main/internal/usecase/registration"
 )
 
@@ -18,12 +19,15 @@ func Run() {
 	registrationUseCase := registration.New(
 		persistent.NewRegistrationRepo(repoM),
 	)
-	// loginUseCase := login.New(
-	// 	persistent.NewLoginRepo(repoM),
-	// )
+	loginUseCase := login.New(
+		persistent.NewLoginRepo(repoM),
+	)
 
-	//controller
-	controller.StartServer(appPort, registrationUseCase)
+	//http router
+	serverRouter := server.New(registrationUseCase, loginUseCase)
 
-	//Graceful shutdown here
+	//start server
+	server.StartServer(appPort, serverRouter)
+
+	//Graceful shutdown
 }

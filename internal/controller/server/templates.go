@@ -1,4 +1,4 @@
-package controller
+package server
 
 import "html/template"
 
@@ -25,12 +25,12 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 	<h1>Welcome</h1>
 	<div class="button-form">
 		<form action="/registration" method="get">
-			<button type="submit">Sign Up</button>
+			<button type="submit">Registration</button>
 		</form>
 	</div>
 	<div class="button-form">
-		<form action="/signin" method="get">
-			<button type="submit">Sign In</button>
+		<form action="/login" method="get">
+			<button type="submit">Login</button>
 		</form>
 	</div>
 </body>
@@ -42,7 +42,7 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Sign Up</title>
+	<title>Registration</title>
 	<style>
 		form {
 			max-width: 400px;
@@ -60,7 +60,7 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 	</style>
 </head>
 <body>
-	<h1>Sign Up</h1>
+	<h1>Registration</h1>
 	<form method="post" action="/registration">
 		<label for="username">Username:</label>
 		<input type="text" id="username" name="username" required>
@@ -74,12 +74,12 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 </html>
 {{end}}
 
-{{define "signin"}}
+{{define "login"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Sign In</title>
+	<title>Login</title>
 	<style>
 		form {
 			max-width: 400px;
@@ -97,8 +97,8 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 	</style>
 </head>
 <body>
-	<h1>Sign In</h1>
-	<form method="post" action="/signin">
+	<h1>Login</h1>
+	<form method="post" action="/login">
 		<label for="username">Username:</label>
 		<input type="text" id="username" name="username" required>
 		
