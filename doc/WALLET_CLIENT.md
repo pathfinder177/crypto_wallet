@@ -90,11 +90,6 @@ Wallet client uses wallet [server](https://github.com/pathfinder177/blockchain_g
 Wallet server HTTP: localhost:3003
 Wallet client HTTP: localhost:3004
 
-### Wallet consists of:
-- Frontend to show new user and main wallet page
-- Middleware to auth a user
-- Backend(server part) to use blockchain functionality
-
 ### Storage
 To implements basic auth: use postgresql as database of users
 #### Schema
@@ -182,18 +177,6 @@ Tools (databases, servers, message brokers, any other packages and frameworks).
 -   repo/persistent: abstract storage to work with
 -   repo/webapi: abstract of wallet server
 
-The structure of the business logic is injected into the router structure, which will be called by the handlers
-handler <- router(injected business logic)
-
-2) When request comes to '/':
-controller/http/v1: router matches url
-call router.usecase.registration/login method
-method is defined in usecase interface
-method calls repo method from injected usecase
-
-Registration,login are use cases
-Define what injects where
-
 ### Service handlers
 All handlers to get info from the server side
 /get_tx_history
@@ -203,6 +186,11 @@ All handlers to get info from the server side
 
 Any info from wallet server is got on /main page and use mainPageHandler internally
 E.g. click on getTXhistory returns txHistory(confirmation) and then returns user back to /main page
+
+At wallet side all these handlers are represented as use cases that injected to router
+UCs use injected repo/webapi to communicate with wallet server
+
+How to isolate pages to access login/reg only?
 
 ### Clean up the code
 ### Format the code

@@ -15,19 +15,23 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		address := r.FormValue("walletAddress")
-		balance, err := getWalletBalance(address)
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+		defer cancel()
+
+		e := entity.Wallet{Address: address}
+		balance, err := router.WalletUC.GetBalance(ctx, e)
 		if err != nil {
-			http.Error(w, "Wallet address is not correct", http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		data := struct {
 			WAddress string
-			WBalance string //FIXME
+			WBalance []string
 		}{address, balance}
 
 		tmpl.ExecuteTemplate(w, "walletActions", data)
-
 		return
 	}
 

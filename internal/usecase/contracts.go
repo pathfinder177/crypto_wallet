@@ -12,4 +12,7 @@ type (
 	Login interface {
 		Login(context.Context, entity.Login) (bool, error)
 	}
+	Wallet interface {
+		GetBalance(context.Context, entity.Wallet) ([]string, error)
+	}
 )
