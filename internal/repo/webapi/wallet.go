@@ -22,7 +22,7 @@ func New(address string) *WebApiRepo {
 func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]string, error) {
 	type WalletBalanceResponse struct {
 		Address string `json:"address"`
-		Balance string `json:"balance"` //FIXME
+		Balance string `json:"balance"`
 	}
 	req_url := repo.serverAddress + "/get_wallet_balance"
 
@@ -46,6 +46,21 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 	if err != nil {
 		return nil, fmt.Errorf("error parsing JSON: %v", err)
 	}
+	balance := parseAnswer(result.Balance)
 
-	return []string{result.Balance}, nil //FIXME
+	return balance, nil
+}
+
+func parseAnswer(ba string) []string {
+	strSliceOutput := []string{}
+	lastPos := 0
+	for i := range ba {
+		if ba[i] == '\n' {
+			s := string(ba[lastPos : i+1])
+			strSliceOutput = append(strSliceOutput, s)
+			lastPos = i + 1
+		}
+	}
+
+	return strSliceOutput
 }

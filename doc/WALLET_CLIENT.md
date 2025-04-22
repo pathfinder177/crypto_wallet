@@ -177,7 +177,7 @@ Tools (databases, servers, message brokers, any other packages and frameworks).
 -   repo/persistent: abstract storage to work with
 -   repo/webapi: abstract of wallet server
 
-### Service handlers
+### Server handlers
 All handlers to get info from the server side
 /get_tx_history
 /get_currency_tx_history
@@ -189,6 +189,8 @@ E.g. click on getTXhistory returns txHistory(confirmation) and then returns user
 
 At wallet side all these handlers are represented as use cases that injected to router
 UCs use injected repo/webapi to communicate with wallet server
+
+Represent wallet server answer in formatted way
 
 How to isolate pages to access login/reg only?
 
