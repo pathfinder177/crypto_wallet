@@ -14,5 +14,9 @@ type (
 	}
 	Wallet interface {
 		GetBalance(context.Context, entity.Wallet) ([]string, error)
+		GetTransactionsHistory(context.Context, entity.Wallet) ([]string, error)
+		GetCurrencyTransactionsHistory(context.Context, entity.Wallet) ([]string, error)
+
+		SendCurrency(context.Context, entity.Wallet, string, string, string) error
 	}
 )

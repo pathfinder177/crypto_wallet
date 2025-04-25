@@ -187,13 +187,8 @@ All handlers to get info from the server side
 /send
 /delete*
 
-Any info from wallet server is got on /main page and use mainPageHandler internally
-E.g. click on getTXhistory returns txHistory(confirmation) and then returns user back to /main page
+Make handlers as handleReq function at server side
 
-At wallet side all these handlers are represented as use cases that injected to router
-UCs use injected repo/webapi to communicate with wallet server
-
-Mock other handlers
 Go to server part
 
 *use middleware and contextWithValue to register/login and handle user req

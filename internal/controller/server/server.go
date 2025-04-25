@@ -8,6 +8,89 @@ import (
 	"time"
 )
 
+func (router *Router) sendCurrencyHandler(w http.ResponseWriter, r *http.Request) {
+	// amount := r.URL.Query().Get("amount")
+	// currency := r.URL.Query().Get("currency")
+	// sender := r.URL.Query().Get("address")
+	receiver := r.URL.Query().Get("receiver")
+
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	// defer cancel()
+
+	// e := entity.Wallet{Address: sender}
+
+	// err := router.WalletUC.SendCurrency(ctx, e, amount, currency, receiver)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+
+	// data := struct {
+	// 	WAmount   string
+	// 	WCurrency string
+	// 	WSender   string
+	// 	WReceiver string
+	// }{amount, currency, sender, receiver}
+
+	// tmpl.ExecuteTemplate(w, "successSendCurrency", data)
+	_, _ = w.Write([]byte(receiver))
+}
+
+func (router *Router) currencyTransactionsHistoryHandler(w http.ResponseWriter, r *http.Request) {
+	// address := r.URL.Query().Get("address")
+	currency := r.URL.Query().Get("currency")
+	// if addr == "" || currency == "" {
+	// http.Error(w, "missing address or currency", http.StatusBadRequest)
+	// return
+	//   }
+
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	// defer cancel()
+
+	// e := entity.Wallet{Address: address}
+	// history, err := router.WalletUC.GetCurrencyTransactionsHistory(ctx, e, currency)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+
+	// data := struct {
+	// 	WAddress  string
+	// 	WHistory  []string
+	// 	WCurrency string
+	// }{address, history, currency}
+
+	// tmpl.ExecuteTemplate(w, "getTransactionsHistory", data)
+	_, _ = w.Write([]byte(currency))
+
+}
+
+func (router *Router) transactionsHistoryHandler(w http.ResponseWriter, r *http.Request) {
+	address := r.URL.Query().Get("address")
+	// if address == "" {
+	// http.Error(w, "missing address", http.StatusBadRequest)
+	// return
+	//   }
+
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	// defer cancel()
+
+	// e := entity.Wallet{Address: address}
+	// history, err := router.WalletUC.GetTransactionsHistory(ctx, e)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+
+	// data := struct {
+	// 	WAddress string
+	// 	WHistory []string
+	// }{address, history}
+
+	// tmpl.ExecuteTemplate(w, "getTransactionsHistory", data)
+	_, _ = w.Write([]byte(address))
+}
+
 func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		if err := r.ParseForm(); err != nil {
@@ -15,6 +98,10 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		address := r.FormValue("walletAddress")
+		if address == "" {
+			http.Error(w, "missing address", http.StatusBadRequest)
+			return
+		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
@@ -45,6 +132,11 @@ func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
+		if username == "" || password == "" {
+			http.Error(w, "missing login or password", http.StatusBadRequest)
+			return
+		}
+
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
@@ -71,8 +163,12 @@ func (router *Router) registrationHandler(w http.ResponseWriter, r *http.Request
 	if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
-		if len(password) < 8 {
-			w.Write([]byte("Password is less than 8 symbols!"))
+
+		if username == "" || password == "" {
+			http.Error(w, "missing login or password", http.StatusBadRequest)
+			return
+		} else if len(password) < 8 {
+			http.Error(w, "password is less than 8 symbols!", http.StatusBadRequest)
 			return
 		}
 
@@ -110,11 +206,15 @@ func (router *Router) indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StartServer(appPort string, router *Router) {
-
 	http.HandleFunc("/", router.indexHandler)
+
 	http.HandleFunc("/registration", router.registrationHandler)
 	http.HandleFunc("/login", router.loginHandler)
+
 	http.HandleFunc("/main", router.mainPageHandler)
+	http.HandleFunc("/get_transactions_history", router.transactionsHistoryHandler)
+	http.HandleFunc("/get_currency_transactions_history", router.currencyTransactionsHistoryHandler)
+	http.HandleFunc("/send_currency", router.sendCurrencyHandler)
 
 	log.Printf("Server is listening on http://localhost%s\n", appPort)
 	if err := http.ListenAndServe(appPort, nil); err != nil {
