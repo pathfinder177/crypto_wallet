@@ -167,16 +167,102 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 	<hr>
 
     <h2>Actions</h2>
-	<form action="/transactions" method="GET">
-        <button type="submit">Get Transactions History</button><br />
+	<!-- GET Transactions History -->
+    <form action="/get_transactions_history" method="GET">
+		<input type="hidden" name="address" value="{{.WAddress}}">
+        
+		<button type="submit">Get Transactions History</button>
     </form>
-    <form>
-        <button type="button">Send Currency</button><br />
-        <button type="button">Get Currency Transactions History</button><br />
-        <button type="button">Delete Wallet</button><br />
+
+    <!-- GET Currency Transactions History -->
+    <form action="/get_currency_transactions_history" method="GET">
+        <!-- pass the address -->
+        <input type="hidden" name="address" value="{{.WAddress}}">
+		
+		<button type="submit">Get Currency Transactions History</button>
+        
+        <!-- choose exactly one of two currencies -->
+    	<label for="currency">Currency:</label>
+    	<select name="currency" id="currency">
+    	    <option value="badgercoin">badgercoin</option>
+    	    <option value="catfishcoin">catfishcoin</option>
+    	</select>
+    </form>
+
+	<!-- SEND Currency -->
+    <form action="/send_currency" method="POST">
+        <!-- Add input fields for amount & recipient as needed -->
+		<input type="hidden" name="address" value="{{.WAddress}}">
+        
+		<button type="submit">Send Currency</button>
+
+		<!-- choose exactly one of two currencies -->
+		<label for="currency">Currency:</label>
+		<select name="currency" id="currency">
+			<option value="badgercoin">badgercoin</option>
+			<option value="catfishcoin">catfishcoin</option>
+		</select>
+
+		<!-- amount to send -->
+		<label for="amount">Amount:</label>
+		<input
+		  type="number"
+		  id="amount"
+		  name="amount"
+		  placeholder="Enter amount"
+		  step="any"
+		  min="0"
+		  required
+		>
+
+		<!-- recipient address -->
+    	<label for="receiver">Recipient Address:</label>
+    	<input
+    	  type="text"
+    	  id="receiver"
+    	  name="receiver"
+    	  placeholder="Enter recipient address"
+    	  required
+    	>
     </form>
 </body>
 </html>
 {{end}}
+
+{{define "getTransactionsHistory"}}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transactions History</title>
+</head>
+<body>
+    {{if .WCurrency}}
+        <h1>Transactions history of {{.WCurrency}} for {{.WAddress}}</h1>
+    {{else}}
+        <h1>Transactions history for {{.WAddress}}</h1>
+    {{end}}
+    <hr>
+
+    {{range .WHistory}}
+        <p>{{.}}</p>
+    {{else}}
+        <p>No transactions found.</p>
+    {{end}}
+</body>
+</html>
+{{end}}
+
+{{define "successSendCurrency"}}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Currency</title>
+</head>
+<body>
+    <h1>{{.Sender}} successfully sent {{.Amount}} {{.Currency}}s to {{.Receiver}}</h1>
+</body>
+</html>
+{{end}}
+
 
 `))
