@@ -8,7 +8,6 @@ import (
 	"log"
 	"main/internal/entity"
 	"net/http"
-	"net/url"
 )
 
 type WebApiRepo struct {
@@ -24,22 +23,29 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 		Address string `json:"address"`
 		Balance string `json:"balance"`
 	}
-	req_url := repo.serverAddress + "/get_wallet_balance"
+	serverURL := repo.serverAddress + "/get_wallet_balance"
 
-	params := url.Values{}
-	params.Add("address", w.Address)
-	fullURL := fmt.Sprintf("%s?%s", req_url, params.Encode())
+	req, err := http.NewRequestWithContext(ctx, "GET", serverURL, nil)
+	if err != nil {
+		log.Fatalf("Error creating request: %v", err)
+	}
 
-	resp, err := http.Get(fullURL)
+	q := req.URL.Query()
+	q.Add("address", w.Address)
+	req.URL.RawQuery = q.Encode()
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatalf("Error sending request: %v", err)
 	}
-	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalf("Error reading response: %v", err)
 	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	var result WalletBalanceResponse
 	err = json.Unmarshal(body, &result)
@@ -51,12 +57,12 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 	return balance, nil
 }
 
-func parseAnswer(ba string) []string {
+func parseAnswer(joined string) []string {
 	strSliceOutput := []string{}
 	lastPos := 0
-	for i := range ba {
-		if ba[i] == '\n' {
-			s := string(ba[lastPos : i+1])
+	for i := range joined {
+		if joined[i] == '\n' {
+			s := string(joined[lastPos : i+1])
 			strSliceOutput = append(strSliceOutput, s)
 			lastPos = i + 1
 		}

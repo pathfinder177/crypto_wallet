@@ -123,9 +123,12 @@ username wallet
 ## Projecting
 ## Features
 1. All connections are handled in apart goroutine
+    Made part of code async if it makes sense
 2. Graceful shutdown
 *3. Rate limiting(client)
 *4. Advanced routing(Gorilla mux)
+5. logs
+6. metrics
 
 ## Client HTTP Handlers
 
@@ -190,7 +193,10 @@ E.g. click on getTXhistory returns txHistory(confirmation) and then returns user
 At wallet side all these handlers are represented as use cases that injected to router
 UCs use injected repo/webapi to communicate with wallet server
 
-Represent wallet server answer in formatted way
+Mock other handlers
+Go to server part
+
+*use middleware and contextWithValue to register/login and handle user req
 
 How to isolate pages to access login/reg only?
 

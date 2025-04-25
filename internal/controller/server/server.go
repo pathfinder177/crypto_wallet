@@ -16,7 +16,7 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		address := r.FormValue("walletAddress")
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
 		e := entity.Wallet{Address: address}
@@ -45,7 +45,7 @@ func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
 		e := entity.Login{Username: username, Password: password}
@@ -76,7 +76,7 @@ func (router *Router) registrationHandler(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
 		e := entity.Registration{Username: username, Password: password}
