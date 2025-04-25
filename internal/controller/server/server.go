@@ -15,8 +15,16 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		address := r.FormValue("walletAddress")
-		//getBalance. execute mainPage template if incorrect address and return
-		balance := []string{"Balance"} //FIXME
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+		defer cancel()
+
+		e := entity.Wallet{Address: address}
+		balance, err := router.WalletUC.GetBalance(ctx, e)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
 		data := struct {
 			WAddress string
@@ -24,7 +32,6 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 		}{address, balance}
 
 		tmpl.ExecuteTemplate(w, "walletActions", data)
-
 		return
 	}
 
@@ -38,7 +45,7 @@ func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
 		e := entity.Login{Username: username, Password: password}
@@ -69,7 +76,7 @@ func (router *Router) registrationHandler(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
 		e := entity.Registration{Username: username, Password: password}

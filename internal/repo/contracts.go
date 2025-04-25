@@ -12,4 +12,7 @@ type (
 	LoginRepo interface {
 		Read(context.Context, entity.Login) (bool, error)
 	}
+	WalletRepo interface {
+		GetBalance(context.Context, entity.Wallet) ([]string, error)
+	}
 )
