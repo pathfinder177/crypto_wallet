@@ -67,28 +67,28 @@ func (router *Router) currencyTransactionsHistoryHandler(w http.ResponseWriter, 
 
 func (router *Router) transactionsHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	address := r.URL.Query().Get("address")
-	// if address == "" {
-	// http.Error(w, "missing address", http.StatusBadRequest)
-	// return
-	//   }
+	if address == "" {
+		http.Error(w, "missing address", http.StatusBadRequest)
+		return
+	}
 
-	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 
-	// e := entity.Wallet{Address: address}
-	// history, err := router.WalletUC.GetTransactionsHistory(ctx, e)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return
-	// }
+	e := entity.Wallet{Address: address}
+	history, err := router.WalletUC.GetTransactionsHistory(ctx, e)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	// data := struct {
-	// 	WAddress string
-	// 	WHistory []string
-	// }{address, history}
+	data := struct {
+		WAddress  string
+		WCurrency string
+		WHistory  []string
+	}{address, "", history}
 
-	// tmpl.ExecuteTemplate(w, "getTransactionsHistory", data)
-	_, _ = w.Write([]byte(address))
+	tmpl.ExecuteTemplate(w, "getTransactionsHistory", data)
 }
 
 func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
