@@ -187,9 +187,10 @@ All handlers to get info from the server side
 /send
 /delete*
 
-Make handlers as handleReq function at server side
+Generalise getTxHistory
+Add Transaction to entity to use in send
 
-Go to server part
+Break down wallet use cases into getBalance etc. Use walletRepo
 
 *use middleware and contextWithValue to register/login and handle user req
 

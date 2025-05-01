@@ -59,8 +59,7 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 
 func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wallet) ([]string, error) {
 	type WalletTxHistoryResponse struct {
-		Address string `json:"address"`
-		History string `json:"balance"`
+		History string `json:"history"`
 	}
 	serverURL := repo.serverAddress + "/get_transactions_history"
 
@@ -96,10 +95,10 @@ func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wal
 	return history, nil
 }
 
+// FIXME: not implemented
 func (repo *WebApiRepo) GetCurrencyTransactionsHistory(ctx context.Context, w entity.Wallet, currency string) ([]string, error) {
 	type WalletTxHistoryResponse struct {
-		Address string `json:"address"`
-		History string `json:"balance"`
+		History string `json:"history"`
 	}
 	serverURL := repo.serverAddress + "/get_currency_transactions_history"
 
@@ -136,6 +135,7 @@ func (repo *WebApiRepo) GetCurrencyTransactionsHistory(ctx context.Context, w en
 	return history, nil
 }
 
+// FIXME: not implemented
 func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amount, currency, receiver string) error {
 	serverURL := repo.serverAddress + "/send_currency"
 
