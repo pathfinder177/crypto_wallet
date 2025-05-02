@@ -174,21 +174,6 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 		<button type="submit">Get Transactions History</button>
     </form>
 
-    <!-- GET Currency Transactions History -->
-    <form action="/get_currency_transactions_history" method="GET">
-        <!-- pass the address -->
-        <input type="hidden" name="address" value="{{.WAddress}}">
-		
-		<button type="submit">Get Currency Transactions History</button>
-        
-        <!-- choose exactly one of two currencies -->
-    	<label for="currency">Currency:</label>
-    	<select name="currency" id="currency">
-    	    <option value="badgercoin">badgercoin</option>
-    	    <option value="catfishcoin">catfishcoin</option>
-    	</select>
-    </form>
-
 	<!-- SEND Currency -->
     <form action="/send_currency" method="POST">
         <!-- Add input fields for amount & recipient as needed -->
