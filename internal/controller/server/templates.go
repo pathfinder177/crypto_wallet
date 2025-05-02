@@ -224,6 +224,16 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
     	  placeholder="Enter recipient address"
     	  required
     	>
+
+		<!-- mineNow -->
+    	<label for="mineNow">mineNow:</label>
+    	<input
+    	  type="text"
+    	  id="mineNow"
+    	  name="mineNow"
+    	  placeholder="mineNow"
+    	  required
+    	>
     </form>
 </body>
 </html>
@@ -259,10 +269,12 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
     <title>Send Currency</title>
 </head>
 <body>
-    <h1>{{.Sender}} successfully sent {{.Amount}} {{.Currency}}s to {{.Receiver}}</h1>
+	<h1>{{.WResult}}</h1>
+	<hr>
+
+    <h2>{{.WSender}} sent {{.WAmount}} {{.WCurrency}} to {{.WReceiver}}</h2>
 </body>
 </html>
 {{end}}
-
 
 `))

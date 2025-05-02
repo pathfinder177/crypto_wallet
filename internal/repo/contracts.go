@@ -12,7 +12,10 @@ type (
 	LoginRepo interface {
 		Read(context.Context, entity.Login) (bool, error)
 	}
-	WalletRepo interface {
+	WebApiRepo interface {
 		GetBalance(context.Context, entity.Wallet) ([]string, error)
+		GetTransactionsHistory(context.Context, entity.Wallet) ([]string, error)
+
+		SendCurrency(context.Context, entity.Wallet, string, string, string, string) (string, error)
 	}
 )
