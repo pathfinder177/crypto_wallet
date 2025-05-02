@@ -24,7 +24,7 @@ func (router *Router) sendCurrencyHandler(w http.ResponseWriter, r *http.Request
 		defer cancel()
 
 		e := entity.Wallet{Address: sender}
-		result, err := router.WalletUC.SendCurrency(ctx, e, amount, currency, receiver, mine)
+		result, err := router.UCWallet.SendCurrency(ctx, e, amount, currency, receiver, mine)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -53,7 +53,7 @@ func (router *Router) transactionsHistoryHandler(w http.ResponseWriter, r *http.
 	defer cancel()
 
 	e := entity.Wallet{Address: address}
-	history, err := router.WalletUC.GetTransactionsHistory(ctx, e)
+	history, err := router.UCWallet.GetTransactionsHistory(ctx, e)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -84,7 +84,7 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 		defer cancel()
 
 		e := entity.Wallet{Address: address}
-		balance, err := router.WalletUC.GetBalance(ctx, e)
+		balance, err := router.UCWallet.GetBalance(ctx, e)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -119,7 +119,7 @@ func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		e := entity.Login{Username: username, Password: password}
 
-		if is_user, err := router.LoginUC.Login(ctx, e); !is_user {
+		if is_user, err := router.UCLogin.Login(ctx, e); !is_user {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		} else if err != nil {
@@ -154,7 +154,7 @@ func (router *Router) registrationHandler(w http.ResponseWriter, r *http.Request
 
 		e := entity.Registration{Username: username, Password: password}
 
-		if is_user, err := router.RegistrationUC.Register(ctx, e); !is_user {
+		if is_user, err := router.UCRegistration.Register(ctx, e); !is_user {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		} else if err != nil {
