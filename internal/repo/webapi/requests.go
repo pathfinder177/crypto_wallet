@@ -1,6 +1,7 @@
 package webapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -17,7 +18,7 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 	}
 	serverURL := repo.serverAddress + "/get_wallet_balance"
 
-	req, err := http.NewRequestWithContext(ctx, "GET", serverURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, serverURL, nil)
 	if err != nil {
 		log.Fatalf("Error creating request: %v", err)
 	}
@@ -55,7 +56,7 @@ func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wal
 	}
 	serverURL := repo.serverAddress + "/get_transactions_history"
 
-	req, err := http.NewRequestWithContext(ctx, "GET", serverURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, serverURL, nil)
 	if err != nil {
 		log.Fatalf("Error creating request: %v", err)
 	}
@@ -91,33 +92,42 @@ func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amoun
 	type WalletSendCurrencyResponse struct {
 		SendResult string `json:"sendResult"`
 	}
-	serverURL := repo.serverAddress + "/send_currency"
 
-	req, err := http.NewRequestWithContext(ctx, "POST", serverURL, nil)
+	payload := map[string]string{
+		"amount":   amount,
+		"currency": currency,
+		"sender":   w.Address,
+		"receiver": receiver,
+		"mine":     mine,
+	}
+	bodyBytes, err := json.Marshal(payload)
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		return "", fmt.Errorf("marshaling payload: %w", err)
 	}
 
-	q := req.URL.Query()
-	q.Add("amount", amount)
-	q.Add("currency", currency)
-	q.Add("sender", w.Address)
-	q.Add("receiver", receiver)
-	q.Add("mine", mine)
-	req.URL.RawQuery = q.Encode()
+	serverURL := repo.serverAddress + "/send_currency"
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, serverURL, bytes.NewReader(bodyBytes))
+	if err != nil {
+		return "", fmt.Errorf("creating request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatalf("Error sending request: %v", err)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("unexpected HTTP status %d: %s", resp.StatusCode, resp.Status)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalf("Error reading response: %v", err)
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 
 	var result WalletSendCurrencyResponse
 	err = json.Unmarshal(body, &result)
