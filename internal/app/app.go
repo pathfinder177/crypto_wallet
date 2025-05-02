@@ -22,21 +22,19 @@ func Run() {
 	webApiRepo := webapi.New(serverAddress)
 
 	//use cases
-	registrationUseCase := registration.New(
+	UCregistration := registration.New(
 		persistent.NewRegistrationRepo(persistentRepo),
 	)
-	loginUseCase := login.New(
+	UClogin := login.New(
 		persistent.NewLoginRepo(persistentRepo),
 	)
-	walletUseCase := wallet.New(
+	UCwallet := wallet.New(
 		*webApiRepo,
 	)
 
-	//http router
-	serverRouter := server.New(registrationUseCase, loginUseCase, walletUseCase)
-
-	//start server
-	server.StartServer(appPort, serverRouter)
+	//controller
+	router := server.New(UCregistration, UClogin, UCwallet)
+	server.StartServer(appPort, router) //FIXME go
 
 	//TODO Graceful shutdown
 }

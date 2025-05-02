@@ -7,11 +7,11 @@ import (
 )
 
 type Router struct {
-	RegistrationUC *registration.UseCase
-	LoginUC        *login.UseCase
-	WalletUC       *wallet.UseCase
+	UCRegistration *registration.UseCase
+	UCLogin        *login.UseCase
+	UCWallet       *wallet.UseCase
 }
 
 func New(reg *registration.UseCase, login *login.UseCase, wallet *wallet.UseCase) *Router {
-	return &Router{RegistrationUC: reg, LoginUC: login, WalletUC: wallet}
+	return &Router{UCRegistration: reg, UCLogin: login, UCWallet: wallet}
 }
