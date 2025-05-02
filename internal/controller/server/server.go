@@ -9,60 +9,37 @@ import (
 )
 
 func (router *Router) sendCurrencyHandler(w http.ResponseWriter, r *http.Request) {
-	// amount := r.URL.Query().Get("amount")
-	// currency := r.URL.Query().Get("currency")
-	// sender := r.URL.Query().Get("address")
-	receiver := r.URL.Query().Get("receiver")
+	if r.Method == http.MethodPost {
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Invalid form", http.StatusBadRequest)
+			return
+		}
+		amount := r.FormValue("amount")
+		currency := r.FormValue("currency")
+		sender := r.FormValue("address")
+		receiver := r.FormValue("receiver")
+		mine := r.FormValue("mine")
 
-	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
-	// defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+		defer cancel()
 
-	// e := entity.Wallet{Address: sender}
+		e := entity.Wallet{Address: sender}
+		result, err := router.WalletUC.SendCurrency(ctx, e, amount, currency, receiver, mine)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
-	// err := router.WalletUC.SendCurrency(ctx, e, amount, currency, receiver)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return
-	// }
+		data := struct {
+			WAmount   string
+			WCurrency string
+			WSender   string
+			WReceiver string
+			WResult   string
+		}{amount, currency, sender, receiver, result}
 
-	// data := struct {
-	// 	WAmount   string
-	// 	WCurrency string
-	// 	WSender   string
-	// 	WReceiver string
-	// }{amount, currency, sender, receiver}
-
-	// tmpl.ExecuteTemplate(w, "successSendCurrency", data)
-	_, _ = w.Write([]byte(receiver))
-}
-
-func (router *Router) currencyTransactionsHistoryHandler(w http.ResponseWriter, r *http.Request) {
-	// address := r.URL.Query().Get("address")
-	currency := r.URL.Query().Get("currency")
-	// if addr == "" || currency == "" {
-	// http.Error(w, "missing address or currency", http.StatusBadRequest)
-	// return
-	//   }
-
-	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
-	// defer cancel()
-
-	// e := entity.Wallet{Address: address}
-	// history, err := router.WalletUC.GetCurrencyTransactionsHistory(ctx, e, currency)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return
-	// }
-
-	// data := struct {
-	// 	WAddress  string
-	// 	WHistory  []string
-	// 	WCurrency string
-	// }{address, history, currency}
-
-	// tmpl.ExecuteTemplate(w, "getTransactionsHistory", data)
-	_, _ = w.Write([]byte(currency))
-
+		tmpl.ExecuteTemplate(w, "successSendCurrency", data)
+	}
 }
 
 func (router *Router) transactionsHistoryHandler(w http.ResponseWriter, r *http.Request) {
@@ -212,8 +189,8 @@ func StartServer(appPort string, router *Router) {
 	http.HandleFunc("/login", router.loginHandler)
 
 	http.HandleFunc("/main", router.mainPageHandler)
+
 	http.HandleFunc("/get_transactions_history", router.transactionsHistoryHandler)
-	http.HandleFunc("/get_currency_transactions_history", router.currencyTransactionsHistoryHandler)
 	http.HandleFunc("/send_currency", router.sendCurrencyHandler)
 
 	log.Printf("Server is listening on http://localhost%s\n", appPort)

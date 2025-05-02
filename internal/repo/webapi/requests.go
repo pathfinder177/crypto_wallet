@@ -1,6 +1,7 @@
 package webapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,14 +11,6 @@ import (
 	"net/http"
 )
 
-type WebApiRepo struct {
-	serverAddress string
-}
-
-func New(address string) *WebApiRepo {
-	return &WebApiRepo{serverAddress: address}
-}
-
 func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]string, error) {
 	type WalletBalanceResponse struct {
 		Address string `json:"address"`
@@ -25,7 +18,7 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 	}
 	serverURL := repo.serverAddress + "/get_wallet_balance"
 
-	req, err := http.NewRequestWithContext(ctx, "GET", serverURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, serverURL, nil)
 	if err != nil {
 		log.Fatalf("Error creating request: %v", err)
 	}
@@ -63,7 +56,7 @@ func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wal
 	}
 	serverURL := repo.serverAddress + "/get_transactions_history"
 
-	req, err := http.NewRequestWithContext(ctx, "GET", serverURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, serverURL, nil)
 	if err != nil {
 		log.Fatalf("Error creating request: %v", err)
 	}
@@ -95,69 +88,52 @@ func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wal
 	return history, nil
 }
 
-// FIXME: not implemented
-func (repo *WebApiRepo) GetCurrencyTransactionsHistory(ctx context.Context, w entity.Wallet, currency string) ([]string, error) {
-	type WalletTxHistoryResponse struct {
-		History string `json:"history"`
+func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amount, currency, receiver, mine string) (string, error) {
+	type WalletSendCurrencyResponse struct {
+		SendResult string `json:"sendResult"`
 	}
-	serverURL := repo.serverAddress + "/get_currency_transactions_history"
 
-	req, err := http.NewRequestWithContext(ctx, "GET", serverURL, nil)
+	payload := map[string]string{
+		"amount":   amount,
+		"currency": currency,
+		"sender":   w.Address,
+		"receiver": receiver,
+		"mine":     mine,
+	}
+	bodyBytes, err := json.Marshal(payload)
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		return "", fmt.Errorf("marshaling payload: %w", err)
 	}
 
-	q := req.URL.Query()
-	q.Add("address", w.Address)
-	q.Add("currency", currency)
-	req.URL.RawQuery = q.Encode()
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatalf("Error sending request: %v", err)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("Error reading response: %v", err)
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	var result WalletTxHistoryResponse
-	err = json.Unmarshal(body, &result)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing JSON: %v", err)
-	}
-	history := parseAnswer(result.History)
-
-	return history, nil
-}
-
-// FIXME: not implemented
-func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amount, currency, receiver string) error {
 	serverURL := repo.serverAddress + "/send_currency"
-
-	req, err := http.NewRequestWithContext(ctx, "POST", serverURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, serverURL, bytes.NewReader(bodyBytes))
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		return "", fmt.Errorf("creating request: %w", err)
 	}
-
-	q := req.URL.Query()
-	q.Add("amount", amount)
-	q.Add("currency", currency)
-	q.Add("sender", w.Address)
-	q.Add("receiver", receiver)
-	req.URL.RawQuery = q.Encode()
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("Error sending request: %v", err)
+		log.Fatalf("Error sending request: %v", err)
 	}
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("Server Error: can not handle request: %v", err)
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("unexpected HTTP status %d: %s", resp.StatusCode, resp.Status)
 	}
 
-	return nil
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("Error reading response: %v", err)
+	}
+
+	var result WalletSendCurrencyResponse
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return "", fmt.Errorf("error parsing JSON: %v", err)
+	}
+
+	return result.SendResult, nil
 }
