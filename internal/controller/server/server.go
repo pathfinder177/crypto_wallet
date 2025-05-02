@@ -72,7 +72,7 @@ func (router *Router) transactionsHistoryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 
 	e := entity.Wallet{Address: address}
