@@ -210,13 +210,13 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
     	  required
     	>
 
-		<!-- mineNow -->
-    	<label for="mineNow">mineNow:</label>
+		<!-- mine -->
+    	<label for="mine">mine:</label>
     	<input
     	  type="text"
-    	  id="mineNow"
-    	  name="mineNow"
-    	  placeholder="mineNow"
+    	  id="mine"
+    	  name="mine"
+    	  placeholder="mine"
     	  required
     	>
     </form>

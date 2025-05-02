@@ -24,6 +24,6 @@ func (uc *UseCase) GetTransactionsHistory(ctx context.Context, w entity.Wallet) 
 	return uc.repo.GetTransactionsHistory(ctx, w)
 }
 
-func (uc *UseCase) SendCurrency(ctx context.Context, w entity.Wallet, amount, currency, receiver, mineNow string) (string, error) {
-	return uc.repo.SendCurrency(ctx, w, amount, currency, receiver, mineNow)
+func (uc *UseCase) SendCurrency(ctx context.Context, w entity.Wallet, amount, currency, receiver, mine string) (string, error) {
+	return uc.repo.SendCurrency(ctx, w, amount, currency, receiver, mine)
 }

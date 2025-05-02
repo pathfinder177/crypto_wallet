@@ -87,7 +87,7 @@ func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wal
 	return history, nil
 }
 
-func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amount, currency, receiver, mineNow string) (string, error) {
+func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amount, currency, receiver, mine string) (string, error) {
 	type WalletSendCurrencyResponse struct {
 		SendResult string `json:"sendResult"`
 	}
@@ -103,7 +103,7 @@ func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amoun
 	q.Add("currency", currency)
 	q.Add("sender", w.Address)
 	q.Add("receiver", receiver)
-	q.Add("mineNow", mineNow)
+	q.Add("mine", mine)
 	req.URL.RawQuery = q.Encode()
 
 	resp, err := http.DefaultClient.Do(req)

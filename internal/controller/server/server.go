@@ -18,13 +18,13 @@ func (router *Router) sendCurrencyHandler(w http.ResponseWriter, r *http.Request
 		currency := r.FormValue("currency")
 		sender := r.FormValue("address")
 		receiver := r.FormValue("receiver")
-		mineNow := r.FormValue("mineNow")
+		mine := r.FormValue("mine")
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
 		e := entity.Wallet{Address: sender}
-		result, err := router.WalletUC.SendCurrency(ctx, e, amount, currency, receiver, mineNow)
+		result, err := router.WalletUC.SendCurrency(ctx, e, amount, currency, receiver, mine)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
