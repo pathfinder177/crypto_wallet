@@ -121,14 +121,6 @@ username wallet
         - delete wallet
 
 ## Projecting
-## Features
-1. All connections are handled in apart goroutine
-    Made part of code async if it makes sense
-2. Graceful shutdown
-*3. Rate limiting(client)
-*4. Advanced routing(Gorilla mux)
-5. logs
-6. metrics
 
 ## Client HTTP Handlers
 
@@ -196,7 +188,29 @@ Break down wallet use cases into getBalance etc. Use walletRepo
 
 How to isolate pages to access login/reg only?
 
-### Clean up the code
-### Format the code
+### Fixes
+
+### Improvements
+
+Concurrency
+
+App level:
+1. Graceful shutdown
+2. Rate limiting
+
+Clean architecture:
+1. DTO
+2. Request/response objects
+
+Controller package
+1. Use middleware(chaining) and contextWithValue to handle client req
+2. Advanced routing(Gorilla mux)
+
+Clean up the code
+1. DRY
+
+Observability
+1. logs
+2. metrics
 
 ## Q&A
