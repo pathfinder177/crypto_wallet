@@ -8,6 +8,20 @@ import (
 	"time"
 )
 
+type Server struct {
+	mux    *http.ServeMux
+	server *http.Server
+}
+
+func NewServer(listenAddr string) *Server {
+	m := http.NewServeMux()
+
+	return &Server{
+		mux:    m,
+		server: &http.Server{Addr: listenAddr, Handler: m},
+	}
+}
+
 func (router *Router) sendCurrencyHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		if err := r.ParseForm(); err != nil {
@@ -182,19 +196,28 @@ func (router *Router) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func StartServer(appPort string, router *Router) {
-	http.HandleFunc("/", router.indexHandler)
+func (s *Server) Start(router *Router) {
+	s.mux.HandleFunc("/", router.indexHandler)
 
-	http.HandleFunc("/registration", router.registrationHandler)
-	http.HandleFunc("/login", router.loginHandler)
+	s.mux.HandleFunc("/registration", router.registrationHandler)
+	s.mux.HandleFunc("/login", router.loginHandler)
 
-	http.HandleFunc("/main", router.mainPageHandler)
+	s.mux.HandleFunc("/main", router.mainPageHandler)
 
-	http.HandleFunc("/get_transactions_history", router.transactionsHistoryHandler)
-	http.HandleFunc("/send_currency", router.sendCurrencyHandler)
+	s.mux.HandleFunc("/get_transactions_history", router.transactionsHistoryHandler)
+	s.mux.HandleFunc("/send_currency", router.sendCurrencyHandler)
 
-	log.Printf("Server is listening on http://localhost%s\n", appPort)
-	if err := http.ListenAndServe(appPort, nil); err != nil {
+	log.Printf("Server is listening on http://%s\n", s.server.Addr)
+
+	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatal("ListenAndServe:", err)
 	}
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+	if err := s.server.Shutdown(ctx); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -12,6 +12,6 @@ type Router struct {
 	UCWallet       *wallet.UseCase
 }
 
-func New(reg *registration.UseCase, login *login.UseCase, wallet *wallet.UseCase) *Router {
+func NewRouter(reg *registration.UseCase, login *login.UseCase, wallet *wallet.UseCase) *Router {
 	return &Router{UCRegistration: reg, UCLogin: login, UCWallet: wallet}
 }
