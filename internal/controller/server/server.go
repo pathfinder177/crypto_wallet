@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"log"
 	"main/internal/entity"
 	"net/http"
@@ -209,8 +210,10 @@ func (s *Server) Start(router *Router, logger *log.Logger) {
 
 	logger.Printf("Server is listening on http://%s\n", s.server.Addr)
 
-	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		logger.Fatal("ListenAndServe:", err)
+	if err := s.server.ListenAndServe(); err != nil {
+		if !errors.Is(err, http.ErrServerClosed) {
+			logger.Fatal("ListenAndServe:", err)
+		}
 	}
 }
 
