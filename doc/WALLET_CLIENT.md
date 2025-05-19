@@ -211,6 +211,13 @@ Observability
 1. handle errors:
     approach:
         build custom types, hierarchy
+
+        1.A sentinel error is a predeclared variable that is used to signify a specific error condition.
+        var x = fmt.Errorf()
+        2. Custom error type: a type that implements Error() method
+            Then custom error type can be embedded in the main type that represents entity
+            to have custom errors for the type that logically refers to the type
+
 2. export metrics
 
 ## Q&A
