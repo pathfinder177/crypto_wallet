@@ -17,7 +17,7 @@ import (
 const (
 	repoSize int = 8
 
-	logsPath string = "./logs.txt"
+	logsPath string = "../logs.txt"
 
 	listenAddr     string = "localhost:3004"
 	webApiRepoAddr string = "http://localhost:3003"
