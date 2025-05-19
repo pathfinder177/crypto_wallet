@@ -196,7 +196,7 @@ func (router *Router) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) Start(router *Router) {
+func (s *Server) Start(router *Router, logger *log.Logger) {
 	s.mux.HandleFunc("/", router.indexHandler)
 
 	s.mux.HandleFunc("/registration", router.registrationHandler)
@@ -207,10 +207,10 @@ func (s *Server) Start(router *Router) {
 	s.mux.HandleFunc("/get_transactions_history", router.transactionsHistoryHandler)
 	s.mux.HandleFunc("/send_currency", router.sendCurrencyHandler)
 
-	log.Printf("Server is listening on http://%s\n", s.server.Addr)
+	logger.Printf("Server is listening on http://%s\n", s.server.Addr)
 
 	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatal("ListenAndServe:", err)
+		logger.Fatal("ListenAndServe:", err)
 	}
 }
 

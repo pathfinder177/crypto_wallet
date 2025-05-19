@@ -191,26 +191,26 @@ How to isolate pages to access login/reg only?
 ### Fixes
 
 ### Improvements
-
-Concurrency
-
-App level:
-1. Graceful shutdown
-2. Rate limiting
-
 Clean architecture:
+Theory:
 1. DTO
 2. Request/response objects
 
 Controller package
-1. Use middleware(chaining) and contextWithValue to handle client req
-2. Advanced routing(Gorilla mux)
+1. failed requests do not crush the app
+2. Use middleware(chaining) and contextWithValue to handle client req
+3. Advanced routing(Gorilla mux)
+
+Repo package
+1. Database mock to test
 
 Clean up the code
 1. DRY
 
 Observability
-1. logs
-2. metrics
+1. handle errors:
+    approach:
+        build custom types, hierarchy
+2. export metrics
 
 ## Q&A
