@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"main/internal/entity"
 	"net/http"
 )
@@ -20,7 +19,7 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, serverURL, nil)
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		repo.logger.Fatalf("Error creating request: %v", err)
 	}
 
 	q := req.URL.Query()
@@ -29,12 +28,12 @@ func (repo *WebApiRepo) GetBalance(ctx context.Context, w entity.Wallet) ([]stri
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Fatalf("Error sending request: %v", err)
+		repo.logger.Fatalf("Error sending request: %v", err)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error reading response: %v", err)
+		repo.logger.Fatalf("Error reading response: %v", err)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -58,7 +57,7 @@ func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wal
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, serverURL, nil)
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		repo.logger.Fatalf("Error creating request: %v", err)
 	}
 
 	q := req.URL.Query()
@@ -67,12 +66,12 @@ func (repo *WebApiRepo) GetTransactionsHistory(ctx context.Context, w entity.Wal
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Fatalf("Error sending request: %v", err)
+		repo.logger.Fatalf("Error sending request: %v", err)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error reading response: %v", err)
+		repo.logger.Fatalf("Error reading response: %v", err)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -114,7 +113,7 @@ func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amoun
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Fatalf("Error sending request: %v", err)
+		repo.logger.Fatalf("Error sending request: %v", err)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -126,7 +125,7 @@ func (repo *WebApiRepo) SendCurrency(ctx context.Context, w entity.Wallet, amoun
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error reading response: %v", err)
+		repo.logger.Fatalf("Error reading response: %v", err)
 	}
 
 	var result WalletSendCurrencyResponse

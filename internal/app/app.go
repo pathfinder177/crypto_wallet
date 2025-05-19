@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
-	"log"
 	server "main/internal/controller/server"
+	logger "main/internal/pkg/logger"
 	"main/internal/repo/persistent"
 	"main/internal/repo/webapi"
 	"main/internal/usecase/login"
@@ -15,7 +15,9 @@ import (
 )
 
 const (
-	repoSize int = 8 //FIXME
+	repoSize int = 8
+
+	logsPath string = "./logs.txt"
 
 	listenAddr     string = "localhost:3004"
 	webApiRepoAddr string = "http://localhost:3003"
@@ -29,9 +31,13 @@ func Run() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
+	//logger
+	l, f := logger.New(logsPath)
+	defer f.Close()
+
 	//repo
 	persistentRepo := make(map[string]string, repoSize)
-	webApiRepo := webapi.New(webApiRepoAddr)
+	webApiRepo := webapi.New(webApiRepoAddr, l)
 
 	//use cases
 	UCregistration := registration.New(
@@ -49,17 +55,17 @@ func Run() {
 	server := server.NewServer(listenAddr)
 
 	go func() {
-		server.Start(router)
+		server.Start(router, l)
 	}()
 
 	//graceful shutdown
 	<-ctx.Done()
-	log.Println("shutting down server gracefully")
+	l.Println("shutting down server gracefully")
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.Fatalf("%v", err)
+		l.Fatalf("%v", err)
 	}
 }
