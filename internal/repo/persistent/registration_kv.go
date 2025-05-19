@@ -2,7 +2,6 @@ package persistent
 
 import (
 	"context"
-	"errors"
 	"main/internal/entity"
 
 	"golang.org/x/crypto/bcrypt"
@@ -21,12 +20,12 @@ func (repo *RegistrationRepo) Create(ctx context.Context, reg entity.Registratio
 	upass := reg.Password
 
 	if _, ok := repo.repo[uname]; ok {
-		return false, errors.New("user exists")
+		return false, errRegUserExists
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(upass), bcrypt.DefaultCost)
 	if err != nil {
-		return false, errors.New("err: bcrypt GenerateFromPassword")
+		return false, errRegBcryptGenFromPassword
 	}
 
 	repo.repo[uname] = string(passwordHash)
