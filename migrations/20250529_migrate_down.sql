@@ -1,2 +1,6 @@
+BEGIN;
+
 DROP TABLE IF EXISTS wallets;
 DROP TABLE IF EXISTS customers;
+
+COMMIT;
