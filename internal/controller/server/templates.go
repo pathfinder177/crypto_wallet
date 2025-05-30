@@ -67,6 +67,9 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 		
 		<label for="password">Password:</label>
 		<input type="password" id="password" name="password" required>
+
+		<label for="wallet">Wallet:</label>
+		<input type="wallet" id="wallet" name="wallet" required>
 		
 		<input type="submit" value="Register" style="margin-top:15px;">
 	</form>
@@ -131,23 +134,6 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 		
 		<input type="submit" value="Login" style="margin-top:15px;">
 	</form>
-</body>
-</html>
-{{end}}
-
-{{define "mainPage"}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Main Page</title>
-</head>
-<body>
-    <h1>Enter your wallet address</h1>
-    <form method="POST" action="/main">
-        <input type="text" name="walletAddress" required>
-        <input type="submit" value="Submit">
-    </form>
 </body>
 </html>
 {{end}}

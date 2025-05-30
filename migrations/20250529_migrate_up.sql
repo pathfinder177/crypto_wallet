@@ -1,0 +1,16 @@
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS customers(
+    created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    id SERIAL PRIMARY KEY NOT NULL,
+    login VARCHAR UNIQUE NOT NULL,
+    password VARCHAR NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS wallets(
+    customer_id SERIAL NOT NULL,
+    wallet_id VARCHAR PRIMARY KEY NOT NULL,
+    CONSTRAINT fk_customers FOREIGN KEY(customer_id) REFERENCES customers(id)
+);
+
+COMMIT;

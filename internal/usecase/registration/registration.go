@@ -3,14 +3,14 @@ package registration
 import (
 	"context"
 	"main/internal/entity"
-	"main/internal/repo"
+	"main/internal/repo/persistent"
 )
 
 type UseCase struct {
-	repo repo.RegistrationRepo
+	repo persistent.PersistentRepo
 }
 
-func New(r repo.RegistrationRepo) *UseCase {
+func New(r persistent.PersistentRepo) *UseCase {
 	return &UseCase{
 		repo: r,
 	}

@@ -13,6 +13,7 @@ type (
 		Login(context.Context, entity.Login) (bool, error)
 	}
 	Wallet interface {
+		GetWallet(ctx context.Context, username string) (string, error)
 		GetBalance(context.Context, entity.Wallet) ([]string, error)
 		GetTransactionsHistory(context.Context, entity.Wallet) ([]string, error)
 
