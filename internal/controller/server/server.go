@@ -6,6 +6,7 @@ import (
 	"log"
 	"main/internal/entity"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -84,19 +85,16 @@ func (router *Router) transactionsHistoryHandler(w http.ResponseWriter, r *http.
 }
 
 func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Invalid form", http.StatusBadRequest)
-			return
-		}
-		address := r.FormValue("walletAddress")
-		if address == "" {
-			http.Error(w, "missing address", http.StatusBadRequest)
-			return
-		}
-
+	if r.Method == http.MethodGet {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
+
+		username := r.URL.Query().Get("username")
+		address, err := router.UCWallet.GetWallet(ctx, username)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		e := entity.Wallet{Address: address}
 		balance, err := router.UCWallet.GetBalance(ctx, e)
@@ -114,9 +112,6 @@ func (router *Router) mainPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := tmpl.ExecuteTemplate(w, "mainPage", nil); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
 
 func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +137,10 @@ func (router *Router) loginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, "/main", http.StatusSeeOther)
+		http.Redirect(w, r,
+			"/main?username="+url.QueryEscape(username),
+			http.StatusSeeOther,
+		)
 		return
 	}
 

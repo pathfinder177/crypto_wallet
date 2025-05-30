@@ -3,14 +3,14 @@ package login
 import (
 	"context"
 	"main/internal/entity"
-	"main/internal/repo"
+	"main/internal/repo/persistent"
 )
 
 type UseCase struct {
-	repo repo.LoginRepo
+	repo persistent.PersistentRepo
 }
 
-func New(r repo.LoginRepo) *UseCase {
+func New(r persistent.PersistentRepo) *UseCase {
 	return &UseCase{
 		repo: r,
 	}

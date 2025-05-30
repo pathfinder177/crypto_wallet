@@ -18,9 +18,6 @@ import (
 )
 
 const (
-	persistentRepoPoolSize int    = 10
-	persistentRepoURL      string = "localhost"
-
 	logsPath string = "../logs.txt"
 
 	listenAddr     string = "localhost:3004"
@@ -60,6 +57,7 @@ func Run() {
 		*persistentRepo,
 	)
 	UCwallet := wallet.New(
+		*persistentRepo,
 		*webApiRepo,
 	)
 

@@ -138,23 +138,6 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 </html>
 {{end}}
 
-{{define "mainPage"}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Main Page</title>
-</head>
-<body>
-    <h1>Enter your wallet address</h1>
-    <form method="POST" action="/main">
-        <input type="text" name="walletAddress" required>
-        <input type="submit" value="Submit">
-    </form>
-</body>
-</html>
-{{end}}
-
 {{define "walletActions"}}
 <!DOCTYPE html>
 <html>
