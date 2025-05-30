@@ -155,9 +155,10 @@ func (router *Router) registrationHandler(w http.ResponseWriter, r *http.Request
 	if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
+		wallet := r.FormValue("wallet")
 
-		if username == "" || password == "" {
-			http.Error(w, "missing login or password", http.StatusBadRequest)
+		if username == "" || password == "" || wallet == "" {
+			http.Error(w, "missing login or password or wallet", http.StatusBadRequest)
 			return
 		} else if len(password) < 8 {
 			http.Error(w, "password is less than 8 symbols!", http.StatusBadRequest)
@@ -167,7 +168,7 @@ func (router *Router) registrationHandler(w http.ResponseWriter, r *http.Request
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 		defer cancel()
 
-		e := entity.Registration{Username: username, Password: password}
+		e := entity.Registration{Username: username, Password: password, Wallet: wallet}
 
 		if is_user, err := router.UCRegistration.Register(ctx, e); !is_user {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
-	server "main/internal/controller/server"
-	logger "main/internal/pkg/logger"
+	"main/internal/controller/server"
+	"main/internal/pkg/logger"
 	"main/internal/repo/persistent"
 	"main/internal/repo/webapi"
 	"main/internal/usecase/login"
@@ -12,10 +12,14 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 const (
-	repoSize int = 8
+	persistentRepoPoolSize int    = 10
+	persistentRepoURL      string = "localhost"
 
 	logsPath string = "../logs.txt"
 
@@ -32,19 +36,28 @@ func Run() {
 	defer stop()
 
 	//logger
+	//pin logic here, do not return logger and file from constructor
 	l, f := logger.New(logsPath)
 	defer f.Close()
 
 	//repo
-	persistentRepo := make(map[string]string, repoSize)
+	db, err := sqlx.Connect("postgres", "host=127.0.0.1 user=walletuser dbname=walletdb password=walletpassword sslmode=require")
+	if err != nil {
+		l.Fatalf("%v", err)
+	}
+	defer db.Close()
+	//FIXME migrations
+	persistent.SetConfig(db)
+
+	persistentRepo := persistent.New(db)
 	webApiRepo := webapi.New(webApiRepoAddr, l)
 
 	//use cases
 	UCregistration := registration.New(
-		persistent.NewRegistrationRepo(persistentRepo),
+		*persistentRepo,
 	)
 	UClogin := login.New(
-		persistent.NewLoginRepo(persistentRepo),
+		*persistentRepo,
 	)
 	UCwallet := wallet.New(
 		*webApiRepo,

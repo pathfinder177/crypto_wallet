@@ -67,6 +67,9 @@ var tmpl = template.Must(template.New("tmpl").Parse(`
 		
 		<label for="password">Password:</label>
 		<input type="password" id="password" name="password" required>
+
+		<label for="wallet">Wallet:</label>
+		<input type="wallet" id="wallet" name="wallet" required>
 		
 		<input type="submit" value="Register" style="margin-top:15px;">
 	</form>
